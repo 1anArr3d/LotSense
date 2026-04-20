@@ -1,0 +1,23 @@
+# Environment
+.env
+
+# Database
+data/listings.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Debug / scratch
+debug_page*.txt
+test_collector.py
+
+# OS
+.DS_Store
+Thumbs.db
