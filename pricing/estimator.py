@@ -28,7 +28,7 @@ _QUANTILES = [0.10, 0.50, 0.90]
 
 _XGB_PARAMS_BASE = {
     "objective": "reg:quantileerror",
-    "max_depth": 3,
+    "max_depth": 4,
     "eta": 0.05,
     "subsample": 0.8,
     "min_child_weight": 3,
@@ -90,7 +90,7 @@ class Estimator:
             raise RuntimeError("Model not trained. Call train() or use from_db().")
 
         if self.confidence == "high":
-            X = np.array([[mileage, year]], dtype=np.float32)
+            X = np.array([[np.log(mileage), year]], dtype=np.float32)
             dtest = xgb.DMatrix(X, feature_names=FEATURE_NAMES)
             raw = {q: float(m.predict(dtest)[0]) for q, m in self._models.items()}
             low = min(raw[0.10], raw[0.50])
