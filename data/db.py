@@ -35,6 +35,8 @@ CREATE TABLE IF NOT EXISTS listings (
 );
 """
 
+_STALE_DAYS = 30
+
 
 @contextmanager
 def open_db(path: Path = _DB_PATH):
@@ -89,9 +91,6 @@ def upsert_listings(conn: sqlite3.Connection, listings: list[RawListing]) -> int
     )
     conn.commit()
     return len(rows)
-
-
-_STALE_DAYS = 30
 
 
 def listing_count(conn: sqlite3.Connection) -> int:

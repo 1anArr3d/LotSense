@@ -177,8 +177,6 @@ class FacebookMarketplaceCollector:
         max_price: int | None = None,
         min_year: int | None = None,
         max_year: int | None = None,
-        min_mileage: int | None = None,
-        max_mileage: int | None = None,
         locations: list[str] | None = None,
     ) -> Iterator[RawListing]:
         """
@@ -200,10 +198,6 @@ class FacebookMarketplaceCollector:
             params["minYear"] = str(min_year)
         if max_year is not None:
             params["maxYear"] = str(max_year)
-        if min_mileage is not None:
-            params["minMileage"] = str(min_mileage)
-        if max_mileage is not None:
-            params["maxMileage"] = str(max_mileage)
         qs = urlencode(params)
 
         all_listings: list[RawListing] = []
