@@ -15,15 +15,16 @@ Usage:
     # {"low": 6800, "mid": 9200, "high": 11500, "n_comps": 34, "confidence": "high"}
 """
 
-import xgboost as xgb
 import numpy as np
+import xgboost as xgb
 
 from data.db import get_listings, open_db
-from data.parser import ParsedListing, parse_all
+from data.parser import AuctionListing
 from pricing.features import FEATURE_NAMES, build_features
 
 MIN_SAMPLES = 5
 MIN_SAMPLES_ML = 30
+MAX_MILEAGE = 400_000
 _QUANTILES = [0.10, 0.50, 0.90]
 
 _XGB_PARAMS_BASE = {
@@ -33,6 +34,8 @@ _XGB_PARAMS_BASE = {
     "subsample": 0.8,
     "min_child_weight": 3,
     "seed": 42,
+    # log_mileage↓  mileage↓  year↑
+    "monotone_constraints": "(-1,-1,1)",
 }
 
 
@@ -50,8 +53,9 @@ class Estimator:
     # Training
     # ------------------------------------------------------------------
 
-    def train(self, listings: list[ParsedListing], target_year: int | None = None) -> None:
-        n = len(listings)
+    def train(self, listings: list[AuctionListing], target_year: int | None = None) -> None:
+        comps = [l for l in listings if l.retail_estimate]
+        n = len(comps)
         if n < MIN_SAMPLES:
             raise ValueError(
                 f"Need at least {MIN_SAMPLES} comps for {self.make} {self.model}, "
@@ -59,18 +63,17 @@ class Estimator:
             )
 
         self.n_samples = n
-        prices = np.array([l.price_cents / 100 for l in listings], dtype=np.float32)
+        prices = np.array([l.retail_estimate / 100 for l in comps], dtype=np.float32)
 
         # Weight comps by proximity to target year — farther years count less.
         # Decay of 0.3 per year: ±3 years = ~40% weight, ±5 years = ~22%.
+        weights = None
         if target_year is not None:
-            years = np.array([l.year for l in listings], dtype=np.float32)
+            years = np.array([l.year for l in comps], dtype=np.float32)
             weights = np.exp(-0.3 * np.abs(years - target_year)).astype(np.float32)
-        else:
-            weights = None
 
         if n >= MIN_SAMPLES_ML:
-            X, y = build_features(listings)
+            X, y = build_features(comps)
             dtrain = xgb.DMatrix(X, label=y, feature_names=FEATURE_NAMES, weight=weights)
             self._models = {}
             for q in _QUANTILES:
@@ -85,12 +88,14 @@ class Estimator:
     # Prediction
     # ------------------------------------------------------------------
 
-    def predict(self, year: int, mileage: int) -> dict:
+    def predict(self, year: int, mileage: int, market_discount: float = 0.75) -> dict:
         if self.confidence == "none":
             raise RuntimeError("Model not trained. Call train() or use from_db().")
+        if not (1 <= mileage <= MAX_MILEAGE):
+            raise ValueError(f"Mileage must be between 1 and {MAX_MILEAGE:,}. Got {mileage:,}.")
 
         if self.confidence == "high":
-            X = np.array([[np.log(mileage), year]], dtype=np.float32)
+            X = np.array([[np.log(mileage), mileage, year]], dtype=np.float32)
             dtest = xgb.DMatrix(X, feature_names=FEATURE_NAMES)
             raw = {q: float(m.predict(dtest)[0]) for q, m in self._models.items()}
             low = min(raw[0.10], raw[0.50])
@@ -103,9 +108,10 @@ class Estimator:
             high = float(np.percentile(p, 90))
 
         return {
-            "low": round(low),
-            "mid": round(mid),
-            "high": round(high),
+            "low": max(0, round(low * market_discount)),
+            "mid": max(0, round(mid * market_discount)),
+            "high": max(0, round(high * market_discount)),
+            "acv_mid": round(mid),
             "n_comps": self.n_samples,
             "confidence": self.confidence,
         }
@@ -122,16 +128,8 @@ class Estimator:
         target_year: int | None = None,
     ) -> "Estimator":
         with open_db() as conn:
-            raw = get_listings(conn)
-
-        parsed = parse_all(raw)
-
-        comps = [
-            l for l in parsed
-            if l.make.lower() == make.lower()
-            and l.model.lower() == model.lower()
-        ]
+            listings = get_listings(conn, make=make, model=model)
 
         est = cls(make, model)
-        est.train(comps, target_year=target_year)
+        est.train(listings, target_year=target_year)
         return est
