@@ -1,0 +1,28 @@
+{
+  "listings": [
+    {
+      "listing_id": "REPLACE_WITH_FB_ITEM_ID",
+      "make": "Honda",
+      "model": "Accord",
+      "year": 2018,
+      "mileage": 87000,
+      "listed_price": 9500,
+      "floor_price": 8200,
+      "listed_at": "2026-04-01T00:00:00",
+      "details": {
+        "accident": "minor rear-end, 2021 — repaired at body shop",
+        "drivetrain": "FWD",
+        "transmission": "automatic",
+        "color": "silver"
+      }
+    }
+  ],
+  "schedule": {
+    "today_open": "10am",
+    "today_close": "6pm",
+    "next_day": "Saturday",
+    "next_open": "10am",
+    "next_close": "5pm",
+    "location": "1234 Culebra Rd, San Antonio TX"
+  }
+}

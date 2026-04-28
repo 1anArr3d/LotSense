@@ -1,0 +1,116 @@
+{"text": "Is this still available?", "label": "serious"}
+{"text": "Does the AC work?", "label": "serious"}
+{"text": "How many miles does it have?", "label": "serious"}
+{"text": "Is the title clean?", "label": "serious"}
+{"text": "Does the check engine light come on?", "label": "serious"}
+{"text": "How long have you had it?", "label": "serious"}
+{"text": "What's wrong with it mechanically?", "label": "serious"}
+{"text": "Does it pass smog?", "label": "serious"}
+{"text": "Are the tires in decent shape?", "label": "serious"}
+{"text": "Is it 4WD or 2WD?", "label": "serious"}
+{"text": "Does the heat work?", "label": "serious"}
+{"text": "Has it been in any accidents?", "label": "serious"}
+{"text": "Can I come look at it today?", "label": "serious"}
+{"text": "What time can I come by?", "label": "serious"}
+{"text": "I can come tomorrow morning, does that work?", "label": "serious"}
+{"text": "Still available? I can come this weekend.", "label": "serious"}
+{"text": "Is the transmission automatic or manual?", "label": "serious"}
+{"text": "Any rust on the frame or underside?", "label": "serious"}
+{"text": "Does it have any leaks?", "label": "serious"}
+{"text": "What's the MPG like on the highway?", "label": "serious"}
+{"text": "Would you take $5200?", "label": "serious"}
+{"text": "Can you do $7500? I can come today.", "label": "serious"}
+{"text": "Is $8800 your lowest? I'm serious about buying.", "label": "serious"}
+{"text": "Would you consider $6300 cash?", "label": "serious"}
+{"text": "I have $9000 cash, is that doable?", "label": "serious"}
+{"text": "Does it have original miles? Asking because it looks clean in the photos.", "label": "serious"}
+{"text": "Is it still running good? Any issues day to day?", "label": "serious"}
+{"text": "Do you have any service records for it?", "label": "serious"}
+{"text": "What's the reason you're selling?", "label": "serious"}
+{"text": "Can I bring it to my mechanic before buying?", "label": "serious"}
+{"text": "¿Todavía está disponible?", "label": "serious"}
+{"text": "¿El aire acondicionado funciona?", "label": "serious"}
+{"text": "¿Cuántas millas tiene?", "label": "serious"}
+{"text": "¿El título está limpio?", "label": "serious"}
+{"text": "¿Puedo ir a verlo hoy?", "label": "serious"}
+{"text": "¿Tiene algún problema mecánico?", "label": "serious"}
+{"text": "¿Acepta $5500 en efectivo?", "label": "serious"}
+{"text": "¿A qué hora puedo pasar?", "label": "serious"}
+{"text": "¿Tiene historial de mantenimiento?", "label": "serious"}
+{"text": "¿La transmisión está bien? ¿No resbala?", "label": "serious"}
+{"text": "¿Cuánto tiempo lo ha tenido usted?", "label": "serious"}
+{"text": "¿Pasa la verificación de emisiones?", "label": "serious"}
+{"text": "Puedo ir este fin de semana, ¿está disponible?", "label": "serious"}
+{"text": "¿Tiene alguna fuga de aceite?", "label": "serious"}
+{"text": "¿Estaría dispuesto a aceptar $7000?", "label": "serious"}
+{"text": "Is this still available? </s> Yeah I'm interested, does the AC blow cold?", "label": "serious"}
+{"text": "How many miles? </s> Wow okay, any issues with it other than the miles?", "label": "serious"}
+{"text": "Would you take $6800? </s> Okay fair, I can work with that. When can I come?", "label": "serious"}
+{"text": "What's wrong with it? </s> Okay that's not bad, I can come check it out this week.", "label": "serious"}
+{"text": "Is it automatic? </s> Good. Does the heat work too?", "label": "serious"}
+{"text": "$4000 cash right now", "label": "lowballer"}
+{"text": "I'll give you $3500, that's all I got", "label": "lowballer"}
+{"text": "Best you can do?", "label": "lowballer"}
+{"text": "That's too high. I can do $5000.", "label": "lowballer"}
+{"text": "Lowest price?", "label": "lowballer"}
+{"text": "My budget is $4500, won't go higher", "label": "lowballer"}
+{"text": "I'll do $3800 cash today, take it or leave it", "label": "lowballer"}
+{"text": "Come on, $4200 and I'll come get it right now", "label": "lowballer"}
+{"text": "I've seen the same car for way less. $4000?", "label": "lowballer"}
+{"text": "You're not gonna get that price. $5000 is fair.", "label": "lowballer"}
+{"text": "Can you do $3500? That's all I have.", "label": "lowballer"}
+{"text": "Final offer, $4800 cash", "label": "lowballer"}
+{"text": "Won't go higher than $5000", "label": "lowballer"}
+{"text": "What's the absolute lowest you'll take?", "label": "lowballer"}
+{"text": "$4000 and I'll pick it up tomorrow, cash in hand", "label": "lowballer"}
+{"text": "I can do $3000. It's a fair price for what it is.", "label": "lowballer"}
+{"text": "Price is way too high bro, how about $4500?", "label": "lowballer"}
+{"text": "I'll bring cash today, $3800, let's make it happen", "label": "lowballer"}
+{"text": "¿Lo más bajo que acepta?", "label": "lowballer"}
+{"text": "Lo más que tengo es $4500, ¿lo acepta?", "label": "lowballer"}
+{"text": "¿Me lo deja en $4000? Es todo lo que tengo.", "label": "lowballer"}
+{"text": "No puedo más de $4200, es mi límite", "label": "lowballer"}
+{"text": "¿Acepta $3500? Le pago cash ahorita.", "label": "lowballer"}
+{"text": "Último precio, $4800 en efectivo", "label": "lowballer"}
+{"text": "Está muy caro. ¿Me lo deja en $4000?", "label": "lowballer"}
+{"text": "¿No puede bajar más? Solo tengo $4500.", "label": "lowballer"}
+{"text": "Le doy $3800 hoy mismo, efectivo.", "label": "lowballer"}
+{"text": "Is this still available? </s> I'll do $3500 cash today, final offer", "label": "lowballer"}
+{"text": "How much? </s> That's too high, I'll give you $4000 cash right now", "label": "lowballer"}
+{"text": "Still available? </s> My budget's only $4000, won't go higher", "label": "lowballer"}
+{"text": "Interested </s> What's the lowest? </s> Come on man I can't do that, $4200 is my max", "label": "lowballer"}
+{"text": "Does the AC work? </s> Okay. I'll give you $3800 cash, take it or leave it", "label": "lowballer"}
+{"text": "¿Todavía disponible? </s> No puedo más de $4500, ¿lo toma?", "label": "lowballer"}
+{"text": "I'll send you a cashier's check for the full amount", "label": "scammer"}
+{"text": "My son will come pick it up, I'm out of state right now", "label": "scammer"}
+{"text": "Can I pay via Zelle? I'll send it right now.", "label": "scammer"}
+{"text": "I'll pay your asking price plus an extra $200 for the trouble", "label": "scammer"}
+{"text": "I'm overseas for work but my agent can come pick it up", "label": "scammer"}
+{"text": "Is this still available? I'll send a money order for the full amount.", "label": "scammer"}
+{"text": "God bless, I'm very interested. Can I send payment via Venmo?", "label": "scammer"}
+{"text": "I can have my daughter pick it up, she's local. I'll wire the payment.", "label": "scammer"}
+{"text": "Can you ship it? I'll cover all costs plus your asking price.", "label": "scammer"}
+{"text": "I'll send a certified check, just hold it for me until it clears.", "label": "scammer"}
+{"text": "Western Union okay? I can send right now.", "label": "scammer"}
+{"text": "My nephew is local and can pick it up. I'll pay via Zelle.", "label": "scammer"}
+{"text": "Is it available? I'll pay full price, no negotiation needed. Send me your PayPal.", "label": "scammer"}
+{"text": "I'm a truck driver out of town. My wife can come get it. Can you take a money order?", "label": "scammer"}
+{"text": "I'll take it. Send me your Venmo and I'll pay immediately.", "label": "scammer"}
+{"text": "Still available? Can I pay via wire transfer? I'm out of state.", "label": "scammer"}
+{"text": "I'll buy it right now, no questions. Just need your Zelle info.", "label": "scammer"}
+{"text": "My brother will pick it up. He's local. I'll send you a check for more than asking.", "label": "scammer"}
+{"text": "Interested. Will you ship? I'll pay asking + $300 for shipping costs.", "label": "scammer"}
+{"text": "Can you hold it? I'll mail a certified check today.", "label": "scammer"}
+{"text": "Le mando un cheque por el total del precio", "label": "scammer"}
+{"text": "Mi hijo lo pasa a recoger, yo estoy fuera del estado", "label": "scammer"}
+{"text": "¿Acepta Zelle? Le mando el dinero ahorita mismo.", "label": "scammer"}
+{"text": "Dios le bendiga, estoy muy interesado. ¿Puede enviarlo?", "label": "scammer"}
+{"text": "Estoy fuera del país pero mi esposa puede recogerlo. Le mando transferencia.", "label": "scammer"}
+{"text": "¿Puede enviar el carro? Le pago el precio completo más el envío.", "label": "scammer"}
+{"text": "Mi sobrino es local y puede recogerlo. Yo le mando el pago por Zelle.", "label": "scammer"}
+{"text": "Le mando un giro postal hoy mismo, ¿lo puede apartar?", "label": "scammer"}
+{"text": "Is this still available? </s> Great. I'm out of state. My son can pick it up. I'll do a cashier's check.", "label": "scammer"}
+{"text": "Interested </s> Can I pay via Zelle? I can send right now, no need to meet.", "label": "scammer"}
+{"text": "Is it available? </s> I'll pay asking price. I just need you to ship it. I'll cover costs.", "label": "scammer"}
+{"text": "Still available? </s> God bless. My agent will pick it up. Can you take a money order?", "label": "scammer"}
+{"text": "¿Disponible? </s> Mi hija lo recoge, yo estoy fuera. ¿Acepta Zelle o transferencia?", "label": "scammer"}
