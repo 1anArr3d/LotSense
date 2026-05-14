@@ -1,29 +1,26 @@
 # LotSense
 
-Local car price estimator + automated FB Marketplace conversation bot.
+Auction car evaluator. Two independent ML models — price and mileage — that together tell you what a car is worth and whether the odometer reading is believable before you bid.
 
 ---
 
-## What it does
+## Models
 
-### Price estimator
-Trains an XGBoost quantile regression model on Copart auction data. Returns a low/mid/high street price range. The training target is Copart's ACV (retail estimate) discounted 25% to reflect street market prices. Monotone constraints enforce correct depreciation direction. 400+ comps per vehicle in ~10 pages is sufficient for reliable results.
-
-### Conversation bot
-Classifies incoming buyer messages by intent (serious buyer, lowballer, scammer), answers listing questions from a per-car knowledge base, negotiates within your set floor price, and hands off to you when a buyer asks to meet or requests your location.
-
----
-
-## Model design
+### pricing/ — Street price estimator
+XGBoost quantile regression trained on Copart and SalvageBid auction comps. Returns a low/mid/high street price range. Training target is ACV × 0.70 (retail estimate discounted to street market). Monotone constraints enforce correct depreciation direction.
 
 | Feature | Role |
 |---------|------|
 | `year` | input |
 | `mileage` | input |
 | `log(mileage)` | engineered input |
-| `ACV × 0.75` | **training target** (street price proxy) |
+| `ACV × 0.70` | training target |
 
-No vision. No hammer prices. No BERT. No LangChain. Copart supplies ACV directly as the label. Monotone constraints on mileage and year enforce that more miles and older age always lower predicted value.
+Confidence tiers: **high** (≥30 comps, XGBoost) / **low** (5–29, percentiles) / **none** (<5, error)
+
+### mileage/ — Odometer estimator
+Fetches Texas inspection history from mytxcar.org by VIN. Fits XGBoost quantile regression on (date, mileage) pairs to project current odometer. Detects suspect readings when a stated mileage deviates significantly from the projected range.
+
 
 ---
 
@@ -31,10 +28,9 @@ No vision. No hammer prices. No BERT. No LangChain. Copart supplies ACV directly
 
 | Source | Provides |
 |--------|----------|
-| Copart | ACV (retail estimate), mileage, year, make, model |
-| Your FB sales | Local calibration (manual entry, feedback loop — Phase 5) |
-
-IAAI is a potential future addition but not needed — Copart alone provides sufficient training volume.
+| Copart | ACV, mileage, year, make, model |
+| SalvageBid | ACV, mileage, year, make, model, VINs (Texas) |
+| mytxcar.org | Texas inspection history by VIN (odometer readings over time) |
 
 ---
 
@@ -43,27 +39,18 @@ IAAI is a potential future addition but not needed — Copart alone provides suf
 ```
 lotsense/
 ├── data/
-│   ├── copart.py               # Copart fetcher (httpx, no auth required)
-│   ├── parser.py               # AuctionListing dataclass + field normalization
-│   └── db.py                   # SQLite: listings, price_estimates
+│   ├── copart.py           # Copart fetcher (httpx)
+│   ├── salvagebid.py       # SalvageBid fetcher + VIN capture
+│   ├── parser.py           # AuctionListing dataclass + field normalization
+│   └── db.py               # SQLite: listings (90-day TTL), odometer_history
+├── mileage/
+│   ├── inspection_scrape.py  # mytxcar.org scraper
+│   ├── mileage_model.py      # XGBoost quantile training + model save/load
+│   └── predict_vin.py        # VIN → odometer estimate
 ├── pricing/
-│   ├── estimator.py            # XGBoost quantile regression (low/mid/high)
-│   └── features.py             # log(mileage), monotone constraints
-├── bot/
-│   ├── adapter.py              # Playwright + mock adapters
-│   ├── dispatcher.py           # message routing + poll loop
-│   ├── classifier.py           # intent classifier (serious / lowball / scam)
-│   ├── conversation.py         # response generation + negotiation logic
-│   ├── handoff.py              # location request detection
-│   └── listings_example.json   # listing config template
-├── fb_scraper/                 # preserved for reuse, not active in LotSense
-│   ├── collector.py
-│   └── parser.py
-├── data/training/
-│   └── intent_seed.jsonl       # 120-example seed dataset
-├── tests/
-│   └── scripts/
-│       └── negotiation.jsonl   # integration test script
+│   ├── estimator.py          # XGBoost quantile regression (low/mid/high)
+│   └── features.py           # log(mileage), monotone constraints
+├── collect.py              # standalone full pipeline (collect + scrape)
 ├── .env.example
 ├── requirements.txt
 └── main.py
@@ -76,17 +63,10 @@ lotsense/
 | Phase | Scope | Status |
 |-------|-------|--------|
 | 1 | Data layer: Copart collector, parser, SQLite schema | done |
-| 2 | Pricing model: XGBoost on ACV labels, monotone constraints | done |
-| 3 | Conversation bot + intent classifier | in progress (90%) |
-| 4 | Connect pricing context to negotiation logic | in progress (90%) |
+| 2 | Pricing model: XGBoost on ACV labels | done |
+| 3 | SalvageBid collector + VIN capture | done |
+| 4 | Mileage model: inspection scrape + XGBoost odometer estimator | done |
 | 5 | FB sales feedback loop | planned |
-
----
-
-## Remaining gaps (Phase 3)
-
-1. **Classifier training** — keyword fallback confidence (0.50–0.70) falls below auto-reply thresholds in the dispatcher. Needs ~200+ examples per class; currently 120. Fix: expand seed dataset or raise keyword confidence for clear-cut matches.
-2. **Integration test** — `tests/scripts/negotiation.jsonl` uses `listing_id: "TEST-001"` but no `bot/listings.json` exists yet. Create from `listings_example.json` first.
 
 ---
 
@@ -94,42 +74,36 @@ lotsense/
 
 | Component | Library |
 |-----------|---------|
-| Price regression | `xgboost` |
+| Price + mileage regression | `xgboost` |
 | HTTP | `httpx` |
 | Local data store | `SQLite` |
-| Browser automation (bot) | `playwright` |
-
----
-
-## How the two components connect
-
-```
-Price estimator output
-        ↓
-  Street value:  $8,400
-  Your floor:    $7,800
-  Listed at:     $9,000
-        ↓
-Conversation bot uses this context
-  → Knows how much room exists to negotiate
-  → Holds firm intelligently, not arbitrarily
-  → Hands off to you when buyer asks to meet
-```
 
 ---
 
 ## Usage
 
 ```bash
-# collect Copart data
-python main.py collect --make Toyota --model Camry --min-year 2010 --max-year 2016 --pages 10
+# collect Copart auction comps
+python main.py collect --make Toyota --model Camry --year 2018
+
+# collect SalvageBid comps + capture VINs
+python main.py salvage
+
+# run full pipeline (collect + scrape inspections)
+python collect.py
+
+# estimate street price
+python main.py price Toyota Camry 2018 97000
+
+# estimate odometer from inspection history
+python main.py mileage 1HGBH41JXMN109186
+
+# validate a stated mileage against inspection history
+python main.py mileage 1HGBH41JXMN109186 --stated 43000
+
+# retrain mileage model
+python -m mileage.mileage_model
 
 # show DB summary
 python main.py stats
-
-# run the bot (real)
-python main.py bot --config bot/listings.json
-
-# run the bot (mock replay)
-python main.py bot --mock --script tests/scripts/negotiation.jsonl
 ```
