@@ -17,6 +17,14 @@ venv/
 dist/
 build/
 
+# Generated data files
+inspection_results.txt
+inspection_clean.csv
+salvagebid_vins.txt
+
+# Trained model artifacts
+mileage/*.json
+
 # Debug / scratch
 debug_page*.txt
 test_collector.py

@@ -1,5 +1,5 @@
 """
-data/db.py — SQLite storage for auction listings (Copart, IAAI).
+data/db.py — SQLite storage for auction listings (Copart, SalvageBid).
 
 Usage:
     from data.db import open_db, upsert_listings
@@ -52,7 +52,23 @@ CREATE TABLE IF NOT EXISTS price_estimates (
     high        INTEGER NOT NULL,
     created_at  INTEGER NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS odometer_history (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    row_id          TEXT    NOT NULL UNIQUE,
+    vin             TEXT    NOT NULL,
+    inspection_date TEXT,
+    mileage         INTEGER,
+    scraped_at      INTEGER NOT NULL DEFAULT (unixepoch())
+);
+
+CREATE INDEX IF NOT EXISTS idx_odometer_vin ON odometer_history(vin);
+
 """
+
+_MIGRATIONS = [
+    "ALTER TABLE listings ADD COLUMN vin TEXT",
+]
 
 
 @contextmanager
@@ -62,7 +78,12 @@ def open_db(path: Path = _DB_PATH):
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA foreign_keys=ON")
     conn.executescript(_DDL)
-    conn.commit()
+    for migration in _MIGRATIONS:
+        try:
+            conn.execute(migration)
+            conn.commit()
+        except sqlite3.OperationalError:
+            pass
     try:
         yield conn
     finally:
@@ -89,6 +110,7 @@ def upsert_listings(conn: sqlite3.Connection, listings: list) -> int:
             l.damage_description,
             l.city,
             l.state,
+            l.vin,
             now,
         )
         for l in listings
@@ -98,14 +120,15 @@ def upsert_listings(conn: sqlite3.Connection, listings: list) -> int:
         INSERT INTO listings (
             source, lot_number, make, model, year, mileage,
             hammer_price, retail_estimate, condition_score,
-            damage_description, city, state, scraped_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            damage_description, city, state, vin, scraped_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(source, lot_number) DO UPDATE SET
             hammer_price       = excluded.hammer_price,
             retail_estimate    = excluded.retail_estimate,
             condition_score    = excluded.condition_score,
             damage_description = excluded.damage_description,
             mileage            = excluded.mileage,
+            vin                = excluded.vin,
             scraped_at         = excluded.scraped_at
         """,
         rows,
@@ -156,6 +179,7 @@ def get_listings(
             damage_description=row["damage_description"],
             city=row["city"],
             state=row["state"],
+            vin=row["vin"],
         )
         for row in rows
     ]

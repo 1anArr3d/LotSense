@@ -1,5 +1,5 @@
 """
-data/parser.py — Shared field normalization for auction sources (Copart, IAAI).
+data/parser.py — Shared field normalization for auction sources (Copart, SalvageBid).
 """
 
 import re
@@ -8,18 +8,19 @@ from dataclasses import dataclass
 
 @dataclass
 class AuctionListing:
-    source: str                      # 'copart' or 'iaai'
+    source: str                      # 'copart', 'salvagebid', etc.
     lot_number: str
     make: str
     model: str
     year: int
     mileage: int
     hammer_price: int                # cents
-    retail_estimate: int | None      # cents; None for IAAI when not available
-    condition_score: float | None    # 0–5 AutoGrade; None for IAAI
+    retail_estimate: int | None      # cents
+    condition_score: float | None    # 0–5 AutoGrade; None when unavailable
     damage_description: str | None
     city: str | None
     state: str | None
+    vin: str | None = None
 
 
 def parse_mileage(mileage_raw: str | None) -> int | None:

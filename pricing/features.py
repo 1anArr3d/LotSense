@@ -7,7 +7,7 @@ Features:
   [2] year           model year
   [3] has_accidents  1 if collision damage (front/rear/side/rollover), else 0
 
-Target (y): retail_estimate in dollars — ACV from Copart/IAAI appraiser.
+Target (y): retail_estimate in dollars — ACV from Copart/SalvageBid appraiser.
 Listings without retail_estimate are excluded.
 """
 
